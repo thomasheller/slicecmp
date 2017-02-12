@@ -67,6 +67,10 @@ func Equal(a, b []string) bool {
 		return false
 	}
 
+	if len(a) != len(b) {
+		return false
+	}
+
 	for idx := range a {
 		if a[idx] != b[idx] {
 			return false

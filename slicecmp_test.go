@@ -24,8 +24,20 @@ func TestCompareSameLength(t *testing.T) {
 	testCompare(t, []string{"foo", "foo"}, []string{"bar", "bar"}, false)
 }
 
-func TestCompareDifferent(t *testing.T) {
-	testCompare(t, []string{"foo", "foo", "foo"}, []string{"bar", "bar"}, true)
+func TestCompareSameLeft(t *testing.T) {
+	testCompare(t, []string{"foo", "foo"}, []string{"foo"}, false)
+}
+
+func TestCompareSameRight(t *testing.T) {
+	testCompare(t, []string{"foo"}, []string{"foo", "foo"}, false)
+}
+
+func TestCompareDifferentLeft(t *testing.T) {
+	testCompare(t, []string{"foo", "foo", "foo"}, []string{"bar", "bar"}, false)
+}
+
+func TestCompareDifferentRight(t *testing.T) {
+	testCompare(t, []string{"foo", "foo"}, []string{"bar", "bar", "bar"}, false)
 }
 
 func testCompare(t *testing.T, a, b []string, expected bool) {
