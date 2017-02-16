@@ -210,9 +210,9 @@ func maxStringLen(s []string) int {
 func max(a, b int) int {
 	if a > b {
 		return a
-	} else {
-		return b
 	}
+
+	return b
 }
 
 // sum calculates the sum of integers
