@@ -1,50 +1,42 @@
 package slicecmp
 
 import (
+	"fmt"
 	"testing"
 )
 
-func TestCompareBothNil(t *testing.T) {
-	testCompare(t, nil, nil, true)
-}
+func TestCompare(t *testing.T) {
+	testCases := []struct {
+		a        []string
+		b        []string
+		expected bool
+	}{
+		{nil, nil, true},
 
-func TestCompareLeftNil(t *testing.T) {
-	testCompare(t, nil, []string{"foo"}, false)
-}
+		{nil, []string{"foo"}, false},
 
-func TestCompareRightNil(t *testing.T) {
-	testCompare(t, []string{"foo"}, nil, false)
-}
+		{[]string{"foo"}, nil, false},
 
-func TestCompareIdentical(t *testing.T) {
-	testCompare(t, []string{"foo", "bar"}, []string{"foo", "bar"}, true)
-}
+		{[]string{"foo", "bar"}, []string{"foo", "bar"}, true},
 
-func TestCompareSameLength(t *testing.T) {
-	testCompare(t, []string{"foo", "foo"}, []string{"bar", "bar"}, false)
-}
+		{[]string{"foo", "foo"}, []string{"bar", "bar"}, false},
 
-func TestCompareSameLeft(t *testing.T) {
-	testCompare(t, []string{"foo", "foo"}, []string{"foo"}, false)
-}
+		{[]string{"foo", "foo"}, []string{"foo"}, false},
 
-func TestCompareSameRight(t *testing.T) {
-	testCompare(t, []string{"foo"}, []string{"foo", "foo"}, false)
-}
+		{[]string{"foo"}, []string{"foo", "foo"}, false},
 
-func TestCompareDifferentLeft(t *testing.T) {
-	testCompare(t, []string{"foo", "foo", "foo"}, []string{"bar", "bar"}, false)
-}
+		{[]string{"foo", "foo", "foo"}, []string{"bar", "bar"}, false},
 
-func TestCompareDifferentRight(t *testing.T) {
-	testCompare(t, []string{"foo", "foo"}, []string{"bar", "bar", "bar"}, false)
-}
+		{[]string{"foo", "foo"}, []string{"bar", "bar", "bar"}, false},
+	}
+	for _, tc := range testCases {
+		t.Run(fmt.Sprintf("%v %v", tc.a, tc.b), func(t *testing.T) {
+			actual := Equal(tc.a, tc.b)
 
-func testCompare(t *testing.T, a, b []string, expected bool) {
-	actual := Equal(a, b)
-
-	if actual != expected {
-		t.Errorf("Test failed.\nInput slice a: %#v\nInput slice b: %#v\nExpected: %t\nActual: %t\n", a, b, expected, actual)
+			if actual != tc.expected {
+				t.Errorf("expected: %t, actual: %t\n", tc.expected, actual)
+			}
+		})
 	}
 }
 
@@ -138,7 +130,7 @@ foo foo   `)
 func testPrettyPrint(t *testing.T, headingA string, sliceA []string, headingB string, sliceB []string, separator rune, spacing int, expected string) {
 	actual := PrettyPrint(headingA, sliceA, headingB, sliceB, separator, spacing)
 	if actual != expected {
-		t.Errorf("Test failed.\nInput slice a: %#v\nInput slice b: %#v\nExpected:\n\n%s\n\nActual:\n\n%s\n\n", sliceA, sliceB, expected, actual)
+		t.Fatalf("Test failed.\nInput slice a: %#v\nInput slice b: %#v\nExpected:\n\n%s\n\nActual:\n\n%s\n\n", sliceA, sliceB, expected, actual)
 	}
 }
 
@@ -272,7 +264,7 @@ func testPrettyPrintMulti(t *testing.T, headingA string, sliceA []string, headin
 	actual := PrettyPrintMulti(separator, spacing, []string{headingA, headingB, headingC}, sliceA, sliceB, sliceC)
 
 	if actual != expected {
-		t.Errorf("Test failed.\nInput slice a: %#v\nInput slice b: %#v\nInput slice c: %#v\nExpected:\n\n%s\n\nActual:\n\n%s\n\n", sliceA, sliceB, sliceC, expected, actual)
+		t.Fatalf("Test failed.\nInput slice a: %#v\nInput slice b: %#v\nInput slice c: %#v\nExpected:\n\n%s\n\nActual:\n\n%s\n\n", sliceA, sliceB, sliceC, expected, actual)
 	}
 }
 
@@ -292,6 +284,17 @@ foo            baz     baz     baz    `
 	actual := PrettyPrintMulti('=', 2, []string{"Alpha", "Beta", "Gamma", "Delta", "Epsilon"}, a, b, c, d, e)
 
 	if actual != expected {
-		t.Errorf("Test failed.\nInput slice a: %#v\nInput slice b: %#v\nInput slice c: %#v\nInput slice d: %#v\nInput slice e: %#v\nExpected:\n\n%s\n\nActual:\n\n%s\n\n", a, b, c, d, e, expected, actual)
+		t.Fatalf("Test failed.\nInput slice a: %#v\nInput slice b: %#v\nInput slice c: %#v\nInput slice d: %#v\nInput slice e: %#v\nExpected:\n\n%s\n\nActual:\n\n%s\n\n", a, b, c, d, e, expected, actual)
 	}
+}
+
+func TestPrettyPrintMultiFailsOnInvalidArguments(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("PrettyPrintMulti didn't panic as expected when called with different number of headings and slices.")
+		}
+	}()
+
+	a := []string{"foo"}
+	PrettyPrintMulti('-', 1, []string{"Alpha"}, a, a)
 }
