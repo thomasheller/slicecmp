@@ -4,8 +4,20 @@ import (
 	"bytes"
 )
 
-// PrettyPrintMulti pretty-prints slices side by side
-func PrettyPrintMulti(separator rune, spacing int, headings []string, slices ...[]string) string {
+const (
+	defaultSeparator = '-'
+	defaultSpacing   = 1
+)
+
+// Sprint "pretty-prints" (formats) slices side by side with the
+// default formatting and returns the resulting string.
+func Sprint(headings []string, slices ...[]string) string {
+	return Sprintf(defaultSeparator, defaultSpacing, headings, slices...)
+}
+
+// Sprintf "pretty-prints" (formats) slices side by side according to
+// the specified formatting options and returns the resulting string.
+func Sprintf(separator rune, spacing int, headings []string, slices ...[]string) string {
 	var result bytes.Buffer
 
 	if len(headings) != len(slices) {
@@ -91,8 +103,15 @@ func PrettyPrintMulti(separator rune, spacing int, headings []string, slices ...
 	return result.String()
 }
 
-// PrettyPrint pretty-prints two slices side by side
-func PrettyPrint(headingA string, sliceA []string, headingB string, sliceB []string, separator rune, spacing int) string {
+// Sprint2 "pretty-prints" (formats) two slices side by side with the
+// default formatting and returns the resulting string.
+func Sprint2(headingA string, sliceA []string, headingB string, sliceB []string) string {
+	return Sprintf2(headingA, sliceA, headingB, sliceB, defaultSeparator, defaultSpacing)
+}
+
+// Sprintf2 "pretty-prints" (formats) two slices side by side according to
+// the specified formatting options and returns the resulting string.
+func Sprintf2(headingA string, sliceA []string, headingB string, sliceB []string, separator rune, spacing int) string {
 	var result bytes.Buffer
 
 	widthA := maxStringLen(sliceA)
