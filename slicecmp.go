@@ -261,3 +261,17 @@ func sum(ints []int) int {
 	}
 	return result
 }
+
+// Transform swaps rows and columns in a string matrix, so you can use
+// other slicecmp functions easliy if your data is "the wrong way
+// round".
+func Transform(m [][]string) [][]string {
+	cols := maxSliceLen(m)
+	result := make([][]string, cols)
+	for _, row := range m {
+		for iCol, col := range row {
+			result[iCol] = append(result[iCol], col)
+		}
+	}
+	return result
+}

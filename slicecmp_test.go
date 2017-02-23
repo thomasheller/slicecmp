@@ -318,3 +318,23 @@ foooooo   bar             baz      baz
 		t.Fatalf("Test failed.\nInput slice a: %#v\nInput slice b: %#v\nInput slice c: %#v\nInput slice d: %#v\nInput slice e: %#v\nExpected:\n\n%s\n\nActual:\n\n%s\n\n", a, b, c, d, e, expected, actual)
 	}
 }
+
+func TestTransform(t *testing.T) {
+	expected := [][]string{
+		[]string{"A1", "B1", "C1"},
+		[]string{"A2", "B2", "C2"},
+		[]string{"A3", "B3", "C3"},
+	}
+	actual := Transform([][]string{
+		[]string{"A1", "A2", "A3"},
+		[]string{"B1", "B2", "B3"},
+		[]string{"C1", "C2", "C3"},
+	})
+	for i := 0; i < 3; i++ {
+		for k := 0; k < 3; k++ {
+			if expected[i][k] != actual[i][k] {
+				t.Fatalf("Row %d, column %d doesn't match: want %s, have %s", i, k, expected[i][k], actual[i][k])
+			}
+		}
+	}
+}
