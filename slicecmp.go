@@ -9,15 +9,23 @@ const (
 	defaultSpacing   = 1
 )
 
+// Alignment determines the alignment of column values.
+type Alignment int
+
+const (
+	AlignLeft = iota
+	AlignRight
+)
+
 // Sprint "pretty-prints" (formats) slices side by side with the
 // default formatting and returns the resulting string.
 func Sprint(headings []string, slices ...[]string) string {
-	return Sprintf(defaultSeparator, defaultSpacing, headings, slices...)
+	return Sprintf(defaultSeparator, defaultSpacing, AlignLeft, headings, slices...)
 }
 
 // Sprintf "pretty-prints" (formats) slices side by side according to
 // the specified formatting options and returns the resulting string.
-func Sprintf(separator rune, spacing int, headings []string, slices ...[]string) string {
+func Sprintf(separator rune, spacing int, alignment Alignment, headings []string, slices ...[]string) string {
 	var result bytes.Buffer
 
 	if len(headings) != len(slices) {
@@ -86,16 +94,27 @@ func Sprintf(separator rune, spacing int, headings []string, slices ...[]string)
 				column = slice[rowIdx]
 			}
 
-			result.WriteString(column)
-
 			width := widths[colIdx]
 
-			if colIdx < len(slices)-1 { // skip last padding
-				width += spacing
+			if alignment == AlignRight {
+				for i := len(column); i < width; i++ {
+					result.WriteString(" ")
+				}
 			}
 
-			for i := len(column); i < width; i++ {
-				result.WriteString(" ")
+			result.WriteString(column)
+
+			if alignment == AlignLeft {
+				for i := len(column); i < width; i++ {
+					result.WriteString(" ")
+				}
+			}
+
+			if colIdx < len(slices)-1 { // skip last padding
+				//width += spacing
+				for i := 0; i < spacing; i++ {
+					result.WriteString(" ")
+				}
 			}
 		}
 	}

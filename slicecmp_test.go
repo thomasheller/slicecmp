@@ -261,7 +261,7 @@ foo bar baz   `)
 }
 
 func testSprintf(t *testing.T, headingA string, sliceA []string, headingB string, sliceB []string, headingC string, sliceC []string, separator rune, spacing int, expected string) {
-	actual := Sprintf(separator, spacing, []string{headingA, headingB, headingC}, sliceA, sliceB, sliceC)
+	actual := Sprintf(separator, spacing, AlignLeft, []string{headingA, headingB, headingC}, sliceA, sliceB, sliceC)
 
 	if actual != expected {
 		t.Fatalf("Test failed.\nInput slice a: %#v\nInput slice b: %#v\nInput slice c: %#v\nExpected:\n\n%s\n\nActual:\n\n%s\n\n", sliceA, sliceB, sliceC, expected, actual)
@@ -281,7 +281,7 @@ foooooo  bar           baz     baz
 foo      bar   baaaaz  baaaaz  baaaaz 
 foo            baz     baz     baz    `
 
-	actual := Sprintf('=', 2, []string{"Alpha", "Beta", "Gamma", "Delta", "Epsilon"}, a, b, c, d, e)
+	actual := Sprintf('=', 2, AlignLeft, []string{"Alpha", "Beta", "Gamma", "Delta", "Epsilon"}, a, b, c, d, e)
 
 	if actual != expected {
 		t.Fatalf("Test failed.\nInput slice a: %#v\nInput slice b: %#v\nInput slice c: %#v\nInput slice d: %#v\nInput slice e: %#v\nExpected:\n\n%s\n\nActual:\n\n%s\n\n", a, b, c, d, e, expected, actual)
@@ -296,5 +296,25 @@ func TestSprintfFailsOnInvalidArguments(t *testing.T) {
 	}()
 
 	a := []string{"foo"}
-	Sprintf('-', 1, []string{"Alpha"}, a, a)
+	Sprintf('-', 1, AlignLeft, []string{"Alpha"}, a, a)
+}
+
+func TestAlignRight(t *testing.T) {
+	a := []string{"foooooo", "foo", "foo"}
+	b := []string{"bar", "bar"}
+	c := []string{"", "baaaaz", "baz"}
+	d := []string{"baz", "baaaaz", "baz"}
+	e := []string{"baz", "baaaaz", "baz"}
+
+	expected := `Alpha    Beta  Gamma   Delta   Epsilon
+======================================
+foooooo   bar             baz      baz
+    foo   bar  baaaaz  baaaaz   baaaaz
+    foo           baz     baz      baz`
+
+	actual := Sprintf('=', 2, AlignRight, []string{"Alpha", "Beta", "Gamma", "Delta", "Epsilon"}, a, b, c, d, e)
+
+	if actual != expected {
+		t.Fatalf("Test failed.\nInput slice a: %#v\nInput slice b: %#v\nInput slice c: %#v\nInput slice d: %#v\nInput slice e: %#v\nExpected:\n\n%s\n\nActual:\n\n%s\n\n", a, b, c, d, e, expected, actual)
+	}
 }
