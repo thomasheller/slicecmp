@@ -2,6 +2,7 @@ package slicecmp
 
 import (
 	"bytes"
+	"unicode/utf8"
 )
 
 const (
@@ -41,8 +42,8 @@ func Sprintf(separator rune, spacing int, alignment Alignment, headings []string
 
 		width := maxStringLen(slice)
 
-		if width < len(heading) {
-			width = len(heading)
+		if width < utf8.RuneCountInString(heading) {
+			width = utf8.RuneCountInString(heading)
 		}
 
 		// width += spacing
@@ -69,7 +70,7 @@ func Sprintf(separator rune, spacing int, alignment Alignment, headings []string
 			width += spacing
 		}
 
-		for i := width - len(heading); i > 0; i-- {
+		for i := width - utf8.RuneCountInString(heading); i > 0; i-- {
 			result.WriteString(" ")
 		}
 	}
@@ -97,7 +98,7 @@ func Sprintf(separator rune, spacing int, alignment Alignment, headings []string
 			width := widths[colIdx]
 
 			if alignment == AlignRight {
-				for i := len(column); i < width; i++ {
+				for i := utf8.RuneCountInString(column); i < width; i++ {
 					result.WriteString(" ")
 				}
 			}
@@ -105,7 +106,7 @@ func Sprintf(separator rune, spacing int, alignment Alignment, headings []string
 			result.WriteString(column)
 
 			if alignment == AlignLeft {
-				for i := len(column); i < width; i++ {
+				for i := utf8.RuneCountInString(column); i < width; i++ {
 					result.WriteString(" ")
 				}
 			}
@@ -135,15 +136,15 @@ func Sprintf2(headingA string, sliceA []string, headingB string, sliceB []string
 
 	widthA := maxStringLen(sliceA)
 
-	if widthA < len(headingA) {
-		widthA = len(headingA)
+	if widthA < utf8.RuneCountInString(headingA) {
+		widthA = utf8.RuneCountInString(headingA)
 	}
 
 	widthA += spacing
 
 	result.WriteString(headingA)
 
-	for i := widthA - len(headingA); i > 0; i-- {
+	for i := widthA - utf8.RuneCountInString(headingA); i > 0; i-- {
 		result.WriteString(" ")
 	}
 
@@ -151,14 +152,14 @@ func Sprintf2(headingA string, sliceA []string, headingB string, sliceB []string
 
 	widthB := maxStringLen(sliceB)
 
-	for i := widthB - len(headingB); i > 0; i-- {
+	for i := widthB - utf8.RuneCountInString(headingB); i > 0; i-- {
 		result.WriteString(" ")
 	}
 
 	result.WriteString("\n")
 
-	if widthB < len(headingB) {
-		widthB = len(headingB)
+	if widthB < utf8.RuneCountInString(headingB) {
+		widthB = utf8.RuneCountInString(headingB)
 	}
 
 	for i := 0; i < widthA+widthB; i++ {
@@ -175,7 +176,7 @@ func Sprintf2(headingA string, sliceA []string, headingB string, sliceB []string
 
 		result.WriteString(column)
 
-		for i := len(column); i < widthA; i++ {
+		for i := utf8.RuneCountInString(column); i < widthA; i++ {
 			result.WriteString(" ")
 		}
 
@@ -187,7 +188,7 @@ func Sprintf2(headingA string, sliceA []string, headingB string, sliceB []string
 			column = ""
 		}
 
-		for i := len(column); i < widthB; i++ {
+		for i := utf8.RuneCountInString(column); i < widthB; i++ {
 			result.WriteString(" ")
 		}
 	}
@@ -236,8 +237,8 @@ func maxStringLen(s []string) int {
 	var result int
 
 	for _, e := range s {
-		if len(e) > result {
-			result = len(e)
+		if utf8.RuneCountInString(e) > result {
+			result = utf8.RuneCountInString(e)
 		}
 	}
 

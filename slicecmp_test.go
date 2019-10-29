@@ -143,6 +143,17 @@ foo foo foo
 foo foo foo`)
 }
 
+func TestSprintfUnicode(t *testing.T) {
+	a := []string{"föö", "föö", "foo"}
+	b := []string{"foo", "foo", "fåå"}
+	c := []string{"foo", "foo", "foo"}
+	testSprintf(t, "foo", a, "foo", b, "foo", c, '-', 1, `foo foo foo
+-----------
+föö foo foo
+föö foo foo
+foo fåå foo`)
+}
+
 func TestSprintfLeft(t *testing.T) {
 	a := []string{"foo", "foo", "foo"}
 	b := []string{"bar", "bar"}
