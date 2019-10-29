@@ -2,7 +2,6 @@ package slicecmp
 
 import (
 	"bytes"
-	"strings"
 	"unicode/utf8"
 )
 
@@ -163,15 +162,12 @@ func maxSliceLen(slices [][]string) int {
 }
 
 // maxStringLen returns the longest string length in a slice
-// (also taking line-breaks into account)
 func maxStringLen(s []string) int {
 	var result int
 
 	for _, e := range s {
-		for _, p := range strings.Split(e, "\n") {
-			if utf8.RuneCountInString(p) > result {
-				result = utf8.RuneCountInString(p)
-			}
+		if utf8.RuneCountInString(e) > result {
+			result = utf8.RuneCountInString(e)
 		}
 	}
 
