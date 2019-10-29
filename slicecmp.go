@@ -11,23 +11,15 @@ const (
 	defaultSpacing   = 1
 )
 
-// Alignment determines the alignment of column values.
-type Alignment int
-
-const (
-	AlignLeft = iota
-	AlignRight
-)
-
 // Sprint "pretty-prints" (formats) slices side by side with the
 // default formatting and returns the resulting string.
 func Sprint(headings []string, slices ...[]string) string {
-	return Sprintf(defaultSeparator, defaultSpacing, AlignLeft, headings, slices...)
+	return Sprintf(defaultSeparator, defaultSpacing, headings, slices...)
 }
 
 // Sprintf "pretty-prints" (formats) slices side by side according to
 // the specified formatting options and returns the resulting string.
-func Sprintf(separator rune, spacing int, alignment Alignment, headings []string, slices ...[]string) string {
+func Sprintf(separator rune, spacing int, headings []string, slices ...[]string) string {
 	var result bytes.Buffer
 
 	if len(headings) != len(slices) {
@@ -98,24 +90,14 @@ func Sprintf(separator rune, spacing int, alignment Alignment, headings []string
 
 			width := widths[colIdx]
 
-			// left padding:
-
-			if alignment == AlignRight {
-				for i := utf8.RuneCountInString(column); i < width; i++ {
-					result.WriteString(" ")
-				}
-			}
-
 			// content:
 
 			result.WriteString(column)
 
 			// right padding:
 
-			if alignment == AlignLeft {
-				for i := utf8.RuneCountInString(column); i < width; i++ {
-					result.WriteString(" ")
-				}
+			for i := utf8.RuneCountInString(column); i < width; i++ {
+				result.WriteString(" ")
 			}
 
 			// spacing between columns:
@@ -141,7 +123,7 @@ func Sprint2(headingA string, sliceA []string, headingB string, sliceB []string)
 // Sprintf2 "pretty-prints" (formats) two slices side by side according to
 // the specified formatting options and returns the resulting string.
 func Sprintf2(headingA string, sliceA []string, headingB string, sliceB []string, separator rune, spacing int) string {
-	return Sprintf(separator, spacing, AlignLeft, []string{headingA, headingB}, sliceA, sliceB)
+	return Sprintf(separator, spacing, []string{headingA, headingB}, sliceA, sliceB)
 }
 
 // Equal reports if two string slices are identical
