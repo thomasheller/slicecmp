@@ -98,19 +98,27 @@ func Sprintf(separator rune, spacing int, alignment Alignment, headings []string
 
 			width := widths[colIdx]
 
+			// left padding:
+
 			if alignment == AlignRight {
 				for i := utf8.RuneCountInString(column); i < width; i++ {
 					result.WriteString(" ")
 				}
 			}
 
+			// content:
+
 			result.WriteString(column)
+
+			// right padding:
 
 			if alignment == AlignLeft {
 				for i := utf8.RuneCountInString(column); i < width; i++ {
 					result.WriteString(" ")
 				}
 			}
+
+			// spacing between columns:
 
 			if colIdx < len(slices)-1 { // skip last padding
 				//width += spacing
