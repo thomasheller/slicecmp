@@ -2,6 +2,7 @@ package slicecmp
 
 import (
 	"bytes"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -132,68 +133,7 @@ func Sprint2(headingA string, sliceA []string, headingB string, sliceB []string)
 // Sprintf2 "pretty-prints" (formats) two slices side by side according to
 // the specified formatting options and returns the resulting string.
 func Sprintf2(headingA string, sliceA []string, headingB string, sliceB []string, separator rune, spacing int) string {
-	var result bytes.Buffer
-
-	widthA := maxStringLen(sliceA)
-
-	if widthA < utf8.RuneCountInString(headingA) {
-		widthA = utf8.RuneCountInString(headingA)
-	}
-
-	widthA += spacing
-
-	result.WriteString(headingA)
-
-	for i := widthA - utf8.RuneCountInString(headingA); i > 0; i-- {
-		result.WriteString(" ")
-	}
-
-	result.WriteString(headingB)
-
-	widthB := maxStringLen(sliceB)
-
-	for i := widthB - utf8.RuneCountInString(headingB); i > 0; i-- {
-		result.WriteString(" ")
-	}
-
-	result.WriteString("\n")
-
-	if widthB < utf8.RuneCountInString(headingB) {
-		widthB = utf8.RuneCountInString(headingB)
-	}
-
-	for i := 0; i < widthA+widthB; i++ {
-		result.WriteString(string(separator))
-	}
-
-	for idx := 0; idx < max(len(sliceA), len(sliceB)); idx++ {
-		result.WriteString("\n")
-
-		column := ""
-		if len(sliceA) > idx {
-			column = sliceA[idx]
-		}
-
-		result.WriteString(column)
-
-		for i := utf8.RuneCountInString(column); i < widthA; i++ {
-			result.WriteString(" ")
-		}
-
-		if len(sliceB) > idx {
-			column = sliceB[idx]
-
-			result.WriteString(column)
-		} else {
-			column = ""
-		}
-
-		for i := utf8.RuneCountInString(column); i < widthB; i++ {
-			result.WriteString(" ")
-		}
-	}
-
-	return result.String()
+	return Sprintf(separator, spacing, AlignLeft, []string{headingA, headingB}, sliceA, sliceB)
 }
 
 // Equal reports if two string slices are identical
@@ -233,12 +173,15 @@ func maxSliceLen(slices [][]string) int {
 }
 
 // maxStringLen returns the longest string length in a slice
+// (also taking line-breaks into account)
 func maxStringLen(s []string) int {
 	var result int
 
 	for _, e := range s {
-		if utf8.RuneCountInString(e) > result {
-			result = utf8.RuneCountInString(e)
+		for _, p := range strings.Split(e, "\n") {
+			if utf8.RuneCountInString(p) > result {
+				result = utf8.RuneCountInString(p)
+			}
 		}
 	}
 
